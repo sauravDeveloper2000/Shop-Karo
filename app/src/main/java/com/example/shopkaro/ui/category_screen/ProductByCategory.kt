@@ -29,8 +29,7 @@ fun ProductsByCategory(
 
         is ProductUiState.OnError -> {
             ErrorComponent(
-                modifier = modifier,
-                cause = productsByCategoryState.cause
+                modifier = modifier
             )
         }
 
