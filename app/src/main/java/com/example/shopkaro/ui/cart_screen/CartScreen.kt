@@ -197,7 +197,7 @@ fun SingleProductItem(
                     HorizontalSpace(space = 10)
                     Text(
                         text = "${product2.rating}/5.0",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
