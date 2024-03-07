@@ -1,0 +1,26 @@
+<resources>
+    <!--
+    For Login Screen
+    -->
+    <string name="app_name">Shop Karo</string>
+    <string name="login_field">Enter your Email-ID</string>
+    <string name="password_field">Enter your Password</string>
+    <string name="login">Login</string>
+    <string name="login_fail">Don\'t have an account?</string>
+    <!--
+    For Registration Screen
+    -->
+    <string name="address">Address</string>
+    <string name="address_details">Enter your Address details</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="personal_info2">Enter your Personal Info</string>
+    <string name="address_text">Type of Address</string>
+    <string name="pin_code">PinCode</string>
+    <string name="use_live_action">Use My Location</string>
+    <string name="city">City</string>
+    <string name="state">State</string>
+    <string name="house_number">Enter your House No.</string>
+    <string name="road_or_area">Road/Area</string>
+    <string name="create">Create</string>
+    <string name="house">House</string>
+</resources>
