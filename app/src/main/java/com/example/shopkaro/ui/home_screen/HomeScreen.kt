@@ -61,8 +61,7 @@ fun HomeScreen(
 
         is ProductUiState.OnError -> {
             ErrorComponent(
-                modifier = Modifier.fillMaxSize(),
-                cause = (productUiState as ProductUiState.OnError).cause
+                modifier = Modifier.fillMaxSize()
             )
         }
 
