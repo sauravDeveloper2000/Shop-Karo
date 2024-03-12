@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -67,6 +68,21 @@ fun ErrorComponent(
     ) {
         LottieAnimation(composition = composition, iterations = LottieConstants.IterateForever)
     }
+}
+
+/**
+ * Animation shown at top app bar of home screen.
+ */
+@Composable
+fun HomeScreenAnimation() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation1))
+    LottieAnimation(
+        modifier = Modifier.size(164.dp),
+        composition = composition,
+        iterations = LottieConstants.IterateForever,
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.Fit,
+    )
 }
 
 fun debugLog(

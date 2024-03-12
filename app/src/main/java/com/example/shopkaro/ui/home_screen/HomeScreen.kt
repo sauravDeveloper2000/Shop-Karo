@@ -14,12 +14,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +42,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.shopkaro.R
 import com.example.shopkaro.components.ErrorComponent
+import com.example.shopkaro.components.HomeScreenAnimation
 import com.example.shopkaro.components.HorizontalSpace
 import com.example.shopkaro.components.LoadingComponent
 import com.example.shopkaro.components.VerticalSpace
@@ -52,34 +57,74 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     getToProductDetail: (Product) -> Unit
 ) {
-    val productUiState by homeScreenViewModel.productUiState.collectAsState()
 
-    when (productUiState) {
-        ProductUiState.Loading -> {
-            LoadingComponent(modifier = Modifier.fillMaxSize())
+    Scaffold(
+        topBar = {
+            HomeScreenTopBar()
         }
+    ) { innerPadding ->
 
-        is ProductUiState.OnError -> {
-            ErrorComponent(
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        val productUiState by homeScreenViewModel.productUiState.collectAsState()
 
-        is ProductUiState.OnSuccess -> {
+        when (productUiState) {
+            ProductUiState.Loading -> {
+                LoadingComponent(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding))
+            }
 
-            ProductsScreen(
-                modifier = Modifier.fillMaxSize(),
-                products = (productUiState as ProductUiState.OnSuccess).products,
-                loadMoreProducts = {
-                    homeScreenViewModel.getMoreProducts()
-                },
-                isProductFinished = homeScreenViewModel.isProductFinished.value,
-                onClickOnProductItem = { product ->
-                    getToProductDetail(product)
-                }
-            )
+            is ProductUiState.OnError -> {
+                ErrorComponent(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                )
+            }
+
+            is ProductUiState.OnSuccess -> {
+
+                ProductsScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    products = (productUiState as ProductUiState.OnSuccess).products,
+                    loadMoreProducts = {
+                        homeScreenViewModel.getMoreProducts()
+                    },
+                    isProductFinished = homeScreenViewModel.isProductFinished.value,
+                    onClickOnProductItem = { product ->
+                        getToProductDetail(product)
+                    }
+                )
+            }
         }
     }
+
+}
+
+/**
+ * Composable function for Home Screen top app bar
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenTopBar() {
+    TopAppBar(title = {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+//            Icon(
+//                imageVector = Icons.Default.ShoppingCart,
+//                contentDescription = null
+//            )
+            Text(
+                text = "Home Screen",
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 20.sp
+            )
+            HomeScreenAnimation()
+        }
+    })
 }
 
 @Composable
