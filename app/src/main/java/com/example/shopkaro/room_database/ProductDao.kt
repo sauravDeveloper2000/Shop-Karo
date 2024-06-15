@@ -12,14 +12,14 @@ interface ProductDao {
 
     @Upsert
     suspend fun updateOrInsertProduct(
-        product: Product2
+        product: NewProduct
     )
 
-    @Query("SELECT * FROM product2")
-    fun getProduct(): Flow<List<Product2>>
+    @Query("SELECT * FROM newproduct")
+    fun getProduct(): Flow<List<NewProduct>>
 
     @Delete
     suspend fun deleteProduct(
-        product: Product2
+        product: NewProduct
     )
 }

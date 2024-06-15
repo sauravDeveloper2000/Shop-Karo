@@ -2,7 +2,7 @@ package com.example.shopkaro.repository.repo_for_db
 
 import android.content.Context
 import android.widget.Toast
-import com.example.shopkaro.room_database.Product2
+import com.example.shopkaro.room_database.NewProduct
 import com.example.shopkaro.room_database.ProductDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -13,7 +13,7 @@ class ProductDbRepoImpl @Inject constructor(
 
     override suspend fun updateOrInsertProduct(
         context: Context,
-        product: Product2,
+        product: NewProduct,
         msg: String
     ) {
         Toast.makeText(
@@ -24,9 +24,9 @@ class ProductDbRepoImpl @Inject constructor(
         dao.updateOrInsertProduct(product)
     }
 
-    override fun getProduct(): Flow<List<Product2>> = dao.getProduct()
+    override fun getProduct(): Flow<List<NewProduct>> = dao.getProduct()
 
-    override suspend fun deleteProduct(product: Product2) {
+    override suspend fun deleteProduct(product: NewProduct) {
         dao.deleteProduct(product)
     }
 }

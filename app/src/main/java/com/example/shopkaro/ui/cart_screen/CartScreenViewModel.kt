@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shopkaro.repository.repo_for_db.ProductDbRepo
-import com.example.shopkaro.room_database.Product2
+import com.example.shopkaro.room_database.NewProduct
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,7 +19,7 @@ class CartScreenViewModel @Inject constructor(
 
     fun addProductToDb(
         context: Context,
-        product: Product2,
+        product: NewProduct,
         msg: String
     ) {
         viewModelScope.launch {
@@ -32,7 +32,7 @@ class CartScreenViewModel @Inject constructor(
     }
 
     fun deleteProduct(
-        product: Product2
+        product: NewProduct
     ) {
         viewModelScope.launch {
             productDbRepo.deleteProduct(product)

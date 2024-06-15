@@ -23,7 +23,9 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,11 +50,12 @@ import coil.request.ImageRequest
 import com.example.shopkaro.R
 import com.example.shopkaro.components.HorizontalSpace
 import com.example.shopkaro.components.VerticalSpace
-import com.example.shopkaro.room_database.Product2
+import com.example.shopkaro.room_database.NewProduct
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
     modifier: Modifier,
@@ -62,49 +65,63 @@ fun CartScreen(
     var products = cartScreenViewModel.products.collectAsState(initial = emptyList()).value
     var context = LocalContext.current
 
-    if (products.isNotEmpty()) {
-        LazyColumn(
-            modifier = modifier
-        ) {
-            items(
-                items = products,
-                key = {
-                    it.id
-                }
-            ) { product ->
-                SingleProductItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp),
-                    product2 = product,
-                    removeProduct = {
-                        cartScreenViewModel.deleteProduct(it)
-                    },
-                    onQuantityChange = {
-                        val newProduct = product.copy(
-                            quantity = it
-                        )
-                        cartScreenViewModel.addProductToDb(
-                            context = context,
-                            product = newProduct,
-                            msg = "Quantity has been changed to $it"
-                        )
-                    },
-                    context = context
+    Scaffold(
+        topBar = {
+            TopAppBar(title = {
+                Text(
+                    text = "Cart Section",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 20.sp
                 )
-                VerticalSpace(space = 10)
-            }
-            item {
-                TotalPrice(modifier = Modifier, products = products)
-            }
+            })
         }
-    } else {
-        EmptyCartScreen(
-            modifier = Modifier.fillMaxSize(),
-            backToShopping = {
-                backToHomeScreen()
+    ) { innerPadding ->
+        if (products.isNotEmpty()) {
+            LazyColumn(
+                modifier = modifier.padding(innerPadding)
+            ) {
+                items(
+                    items = products,
+                    key = {
+                        it.id
+                    }
+                ) { product ->
+                    SingleProductItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
+                        newProduct = product,
+                        removeProduct = {
+                            cartScreenViewModel.deleteProduct(it)
+                        },
+                        onQuantityChange = {
+                            val newProduct = product.copy(
+                                quantity = it
+                            )
+                            cartScreenViewModel.addProductToDb(
+                                context = context,
+                                product = newProduct,
+                                msg = "Quantity has been changed to $it"
+                            )
+                        },
+                        context = context
+                    )
+                    VerticalSpace(space = 10)
+                }
+                item {
+                    TotalPrice(modifier = Modifier, products = products)
+                }
             }
-        )
+        } else {
+            EmptyCartScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                backToShopping = {
+                    backToHomeScreen()
+                }
+            )
+        }
     }
 }
 
@@ -115,9 +132,9 @@ fun CartScreen(
 @Composable
 fun SingleProductItem(
     modifier: Modifier,
-    product2: Product2,
+    newProduct: NewProduct,
     context: Context,
-    removeProduct: (Product2) -> Unit,
+    removeProduct: (NewProduct) -> Unit,
     onQuantityChange: (Int) -> Unit
 ) {
     // Content for drop down menu
@@ -137,10 +154,10 @@ fun SingleProductItem(
                     .padding(5.dp)
                     .clip(RoundedCornerShape(10.dp)),
                 model = ImageRequest.Builder(context)
-                    .data(product2.thumbnail)
+                    .data(newProduct.thumbnail)
                     .crossfade(true)
                     .build(),
-                contentDescription = product2.title,
+                contentDescription = newProduct.title,
                 error = painterResource(id = R.drawable.broken_image),
                 placeholder = painterResource(id = R.drawable.loading),
                 alignment = Alignment.Center,
@@ -151,12 +168,12 @@ fun SingleProductItem(
                 modifier = Modifier.padding(5.dp)
             ) {
                 Text(
-                    text = product2.brand,
+                    text = newProduct.brand,
                     style = MaterialTheme.typography.titleMedium
                 )
                 VerticalSpace(space = 5)
                 Text(
-                    text = product2.title,
+                    text = newProduct.title,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 VerticalSpace(space = 5)
@@ -169,12 +186,12 @@ fun SingleProductItem(
                         contentDescription = null,
                     )
                     Text(
-                        text = "${product2.discountPercentage.toInt()}off",
+                        text = "${newProduct.discountPercentage.toInt()}off",
                         style = MaterialTheme.typography.bodyLarge
                     )
                     HorizontalSpace(space = 10)
                     Text(
-                        text = "₨-${product2.price * selectedQuantity}",
+                        text = "₨-${newProduct.price * selectedQuantity}",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -187,7 +204,7 @@ fun SingleProductItem(
                      * Rating composable - Shows rating to user
                      */
                     RatingBar(
-                        value = product2.rating.toFloat(),
+                        value = newProduct.rating.toFloat(),
                         style = RatingBarStyle.Fill(inActiveColor = Color.White),
                         onValueChange = {},
                         onRatingChanged = {},
@@ -196,7 +213,7 @@ fun SingleProductItem(
                     )
                     HorizontalSpace(space = 10)
                     Text(
-                        text = "${product2.rating}/5.0",
+                        text = "${newProduct.rating}/5.0",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -218,7 +235,7 @@ fun SingleProductItem(
              */
             Button(
                 onClick = {
-                    removeProduct(product2)
+                    removeProduct(newProduct)
                 },
                 shape = RoundedCornerShape(5.dp)
             ) {
@@ -308,7 +325,7 @@ fun DropDownMenuForQuantity(
 @Composable
 fun TotalPrice(
     modifier: Modifier,
-    products: List<Product2>
+    products: List<NewProduct>
 ) {
     var totalPrice = 0
     Card(

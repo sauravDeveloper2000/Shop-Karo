@@ -27,7 +27,9 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -48,71 +50,95 @@ fun AccountScreen(
     addNewAddress: () -> Unit,
     accountScreenViewModel: AccountScreenViewModel = hiltViewModel()
 ) {
-    val addresses = accountScreenViewModel.addresses.collectAsState().value
-    Column(
-        modifier = modifier.scrollable(rememberScrollState(), orientation = Orientation.Vertical),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        /**
-         * With this below button user can add new address for themselves.
-         */
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-                .background(color = Color.White, shape = RoundedCornerShape(5.dp))
-                .clickable {
-                    addNewAddress()
-                },
-            text = "+ Add New Address",
-            textAlign = TextAlign.Center,
-            color = Color.Blue,
-            style = MaterialTheme.typography.headlineSmall
-        )
-        Divider(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            thickness = 4.dp,
-            color = Color.Gray
-        )
-        Text(
-            text = "${addresses.size}  Save Addresses",
-            style = MaterialTheme.typography.titleMedium
-        )
+    Scaffold(
+        topBar = {
+            AccountScreenTopBar()
+        }
+    ) { innerPadding ->
 
-        /**
-         * With below lazy column layout we are showing user addresses to them in account screen.
-         */
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(10.dp)
+        val addresses = accountScreenViewModel.addresses.collectAsState().value
+        Column(
+            modifier = modifier
+                .padding(innerPadding)
+                .scrollable(rememberScrollState(), orientation = Orientation.Vertical),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(
-                items = addresses
-            ) { address ->
-                UserAddress(
-                    address = address,
-                    modifier = Modifier.fillMaxWidth(),
-                    accountScreenViewModel = accountScreenViewModel
+            /**
+             * With this below button user can add new address for themselves.
+             */
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 10.dp)
+                    .background(color = Color.White, shape = RoundedCornerShape(5.dp))
+                    .clickable {
+                        addNewAddress()
+                    },
+                text = "+ Add New Address",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Divider(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                thickness = 4.dp,
+                color = Color.Gray
+            )
+            Text(
+                text = "${addresses.size}  Save Addresses",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            /**
+             * With below lazy column layout we are showing user addresses to them in account screen.
+             */
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(10.dp)
+            ) {
+                items(
+                    items = addresses
+                ) { address ->
+                    UserAddress(
+                        address = address,
+                        modifier = Modifier.fillMaxWidth(),
+                        accountScreenViewModel = accountScreenViewModel
+                    )
+                    VerticalSpace(space = 15)
+                }
+            }
+            /**
+             * Below button can cause user to sign out from the app.
+             */
+            Button(
+                onClick = {
+                    accountScreenViewModel.signOut()
+                },
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(
+                    text = "Sign Out",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
                 )
-                VerticalSpace(space = 15)
             }
         }
-        /**
-         * Below button can cause user to sign out from the app.
-         */
-        Button(
-            onClick = {
-                accountScreenViewModel.signOut()
-            },
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Text(
-                text = "Sign Out",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
     }
+}
+
+/**
+ * Composable function which shows top app bar at account screen
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AccountScreenTopBar() {
+    TopAppBar(title = {
+        Text(
+            text = "Account Details",
+            style = MaterialTheme.typography.titleMedium,
+            fontSize = 20.sp
+        )
+    })
 }
 
 /**
